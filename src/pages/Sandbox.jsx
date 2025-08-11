@@ -1,6 +1,10 @@
 import React from 'react';
-import RentalCard from '../components/RentalCard';
 import Spline from '@splinetool/react-spline';
+import Slideshow from '../components/Slideshow';
+import imgFurniture from '../assets/furniture.png';
+import imgMaybach from '../assets/maybach.png';
+import imgOnly from '../assets/Only.png';
+import imgShoe from '../assets/shoe.png';
 
 const Sandbox = () => {
   return (
@@ -10,25 +14,27 @@ const Sandbox = () => {
         <div className="absolute inset-0">
           <Spline scene="https://prod.spline.design/eMRb5nQ2pqJ9mMRN/scene.splinecode" />
         </div>
-        <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-6 text-center">
-          <h2 className="text-[2.4rem] md:text-[3rem] leading-tight font-serif font-semibold tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]">
-            
-          </h2>
+        {/* Overlay actions at ~25% from left edge */}
+        <div className="absolute top-[80%] left-[11%] z-10 flex items-center gap-3 -translate-y-1/2">
+          <a href="/home" className="px-4 h-11 inline-flex items-center rounded-xl text-sm bg-black text-white hover:bg-neutral-800 transition shadow">
+            Sign in
+          </a>
+          <a href="/about" className="px-4 h-11 inline-flex items-center rounded-xl text-sm border border-white/70 bg-white/90 hover:bg-white text-neutral-900 transition shadow">
+            Sign up
+          </a>
         </div>
       </section>
 
       <section className="px-6 py-10">
         <div className="mx-auto max-w-6xl">
-          <h1 className="text-2xl font-semibold tracking-tight">Sandbox</h1>
-          <p className="mt-1 text-neutral/70">Preview of RentalCard grid items.</p>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <RentalCard
-                key={i}
-                name={`Product ${i + 1}`}
-                priceText={`₹${(i + 1) * 10}.00/day`}
-              />
-            ))}
+          <h1 className="text-2xl font-semibold tracking-tight"></h1>
+          <p className="mt-1 text-neutral/70"></p>
+          {/* Slideshow below Spline */}
+          <div className="mt-6">
+            <Slideshow
+              images={[imgFurniture, imgMaybach, imgOnly, imgShoe]}
+              intervalMs={4000}
+            />
           </div>
         </div>
       </section>
