@@ -5,6 +5,7 @@ import AuthCard from '../components/AuthCard';
 import Navbar from '../components/Navbar';
 import PasswordField from '../components/PasswordField';
 import { auth, setAuthToken } from '../services/api';
+import { getMe } from '../services/user';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -77,7 +78,19 @@ const Login = () => {
       });
       const token = result?.access_token || result?.token || result?.data?.access_token || result?.data?.token;
       if (token) setAuthToken(token);
-      navigate('/home');
+      try {
+        const me = await getMe();
+        const roles = me?.roles || [];
+        if (roles.includes('Admin')) {
+          navigate('/admin');
+        } else if (roles.includes('Seller')) {
+          navigate('/seller');
+        } else {
+          navigate('/home');
+        }
+      } catch {
+        navigate('/home');
+      }
     } catch (err) {
       setError(err?.message || 'Failed to sign in');
     } finally {

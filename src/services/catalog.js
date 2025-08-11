@@ -1,8 +1,6 @@
 // catalog.js - Catalog APIs
 import http from './http';
-
-export const CATEGORIES_PATH = import.meta.env.VITE_CATEGORIES_PATH || '/catalog/categories';
-export const PRODUCTS_PATH = import.meta.env.VITE_PRODUCTS_PATH || '/catalog/products';
+import { CATEGORIES_PATH, PRODUCTS_PATH } from './endpoints';
 
 export async function listCategories() {
   const { data } = await http.get(CATEGORIES_PATH);

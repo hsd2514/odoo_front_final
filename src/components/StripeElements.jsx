@@ -29,6 +29,7 @@ const CheckoutForm = ({ rentalId, amount, onSuccess, onError, onLoading }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [clientSecret, setClientSecret] = useState('');
+  const [globalError, setGlobalError] = useState(null);
 
   useEffect(() => {
     if (rentalId && amount) {
@@ -159,7 +160,7 @@ const StripeElements = ({ rentalId, amount, onSuccess, onError, onLoading }) => 
         setStripePromise(stripe);
       } catch (error) {
         console.error('Failed to load Stripe:', error);
-        setError('Failed to load payment system');
+        setGlobalError('Failed to load payment system');
       }
     };
 
@@ -171,6 +172,7 @@ const StripeElements = ({ rentalId, amount, onSuccess, onError, onLoading }) => 
       <div className="text-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
         <p className="mt-2 text-gray-600">Loading payment system...</p>
+        {globalError && <p className="mt-2 text-red-600 text-sm">{globalError}</p>}
       </div>
     );
   }

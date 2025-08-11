@@ -1,32 +1,18 @@
 // http.js - Axios client with interceptors
 import axios from 'axios';
+import { getAuthToken, clearAuthToken } from './authStorage';
 
 const isLocal = typeof window !== 'undefined' && /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname);
 const envBase = import.meta.env.VITE_API_BASE_URL && String(import.meta.env.VITE_API_BASE_URL).trim();
 // If env is provided, always use it (sends requests to that URL). Otherwise, on localhost use proxy ("")
 export const apiBaseURL = envBase || (isLocal ? '' : '');
 
-export const http = axios.create({ baseURL: apiBaseURL });
-
-function getToken() {
-  try {
-    return localStorage.getItem('auth_token') || '';
-  } catch {
-    return '';
-  }
-}
-
-export function clearToken() {
-  try {
-    localStorage.removeItem('auth_token');
-  } catch {
-    /* noop */
-  }
-}
+// Disable axios timeout to avoid 15000ms errors on slow tunnels; rely on browser/network timeouts
+export const http = axios.create({ baseURL: apiBaseURL, timeout: 0 });
 
 // Request: attach bearer token
 http.interceptors.request.use((config) => {
-  const token = getToken();
+  const token = getAuthToken();
   if (token) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
@@ -50,7 +36,7 @@ http.interceptors.response.use(
     }
 
     if (status === 401) {
-      clearToken();
+      clearAuthToken();
       if (typeof window !== 'undefined') {
         const loginPath = '/auth/login';
         if (window.location.pathname !== loginPath) {

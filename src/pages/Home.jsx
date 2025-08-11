@@ -2,6 +2,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import ProductGrid from '../components/ProductGrid';
 import ProductListItem from '../components/ProductListItem';
+import PriceListSelector from '../components/PriceListSelector';
+import { resolveProductId } from '../utils/product';
 import { useShop } from '../context/ShopContext';
 import { listCategories, listCatalogProducts } from '../services/catalog';
 
@@ -87,15 +89,7 @@ const Home = () => {
             {/* Price List Selector */}
             <div className="lg:w-48">
               <label className="block text-sm font-medium text-gray-700 mb-1">Price List</label>
-              <select
-                className="w-full h-10 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
-                value={priceList}
-                onChange={(e) => setPriceList(e.target.value)}
-              >
-                <option value="standard">Standard</option>
-                <option value="premium">Premium (+20%)</option>
-                <option value="wholesale">Wholesale (-10%)</option>
-              </select>
+              <PriceListSelector value={priceList} onChange={setPriceList} />
             </div>
 
             {/* Search Input */}
@@ -162,7 +156,7 @@ const Home = () => {
               <ProductGrid
                 products={filtered}
                 onAddToCart={(product) => {
-                  const productId = product?.id ?? product?.product_id ?? product?.uuid ?? product?.pk ?? product?.slug;
+                  const productId = resolveProductId(product);
                   if (productId) {
                     addToCart(productId, {
                       title: product?.name || product?.title || product?.product_name,
@@ -184,7 +178,7 @@ const Home = () => {
             ) : (
               <div className="space-y-3 mb-6">
                 {filtered.map((p, idx) => {
-                  const productId = p?.id ?? p?.product_id ?? p?.uuid ?? p?.pk ?? p?.slug;
+                  const productId = resolveProductId(p);
                   return (
                     <ProductListItem
                       key={String(productId ?? idx)}

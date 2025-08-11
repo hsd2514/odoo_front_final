@@ -9,13 +9,15 @@ import PriceUnitBadge from '../components/PriceUnitBadge';
 import { getProduct } from '../services/catalog';
 import { durationUnits } from '../utils/duration';
 import DateRangePicker from '../components/DateRangePicker';
+import PriceListSelector from '../components/PriceListSelector';
+import { resolveProductId, resolveUnitPrice, resolvePricingUnit, resolveName } from '../utils/product';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products, priceMultiplier, priceList, setPriceList, addToCart, wishlist, toggleWishlist } = useShop();
 
-  const product = useMemo(() => products.find((p) => String(p?.id ?? p?.product_id ?? p?.uuid ?? p?.pk ?? p?.slug) === String(id)), [products, id]);
+  const product = useMemo(() => products.find((p) => String(resolveProductId(p)) === String(id)), [products, id]);
   const [loadedProduct, setLoadedProduct] = useState(null);
   const [qty, setQty] = useState(1);
   const [fromDate, setFromDate] = useState('');
@@ -25,9 +27,9 @@ const ProductDetail = () => {
   const notFound = !product && !loadedProduct;
 
   const pObj = loadedProduct || product || {};
-  const resolvedProductId = pObj?.id ?? pObj?.product_id ?? pObj?.uuid ?? pObj?.pk ?? pObj?.slug ?? id;
-  const unitPrice = Number(pObj?.price ?? pObj?.unit_price ?? pObj?.base_price ?? 0);
-  const pricingUnit = pObj?.pricing_unit || 'day';
+  const resolvedProductId = resolveProductId(pObj) ?? id;
+  const unitPrice = resolveUnitPrice(pObj);
+  const pricingUnit = resolvePricingUnit(pObj);
   const displayPrice = unitPrice * priceMultiplier;
   const perUnitPrice = Math.max(1, Math.round(displayPrice / 2));
 
@@ -70,21 +72,13 @@ const ProductDetail = () => {
             <span className="text-neutral-500">/</span>
             <span className="ml-2">{pObj?.name || pObj?.title || 'Product'}</span>
           </div>
-          <select
-            className="w-44 h-10 px-3 rounded-lg border border-neutral/30 bg-white shadow-sm text-sm"
-            value={priceList}
-            onChange={(e) => setPriceList(e.target.value)}
-          >
-            <option value="standard">Price List</option>
-            <option value="premium">Premium (+20%)</option>
-            <option value="wholesale">Wholesale (-10%)</option>
-          </select>
+            <PriceListSelector value={priceList} onChange={setPriceList} />
         </div>
 
         <div className="grid grid-cols-12 gap-6">
           {/* Left: image + wishlist + description */}
           <div className="col-span-5">
-            <ProductGallery productId={resolvedProductId} drmProtected={pObj?.drm_protected} />
+              <ProductGallery productId={resolvedProductId} drmProtected={pObj?.drm_protected} />
             <button
               className={`mt-4 w-full h-10 rounded-full border ${isWished?'border-red-300 text-red-600 bg-red-50':'border-neutral/30 bg-white text-neutral-700'} shadow-sm`}
               onClick={() => toggleWishlist(resolvedProductId)}
@@ -106,7 +100,7 @@ const ProductDetail = () => {
               <div>
                 <div className="text-2xl font-semibold">{pObj?.name || pObj?.title || 'Product'}</div>
                 <div className="mt-2 flex items-center gap-3">
-                  <div className="text-2xl font-semibold">₹ {displayPrice.toLocaleString()}</div>
+                <div className="text-2xl font-semibold">₹ {displayPrice.toLocaleString()}</div>
                   <div className="text-neutral-500">( ₹{perUnitPrice.toLocaleString()} <PriceUnitBadge unit={pricingUnit} /> )</div>
                 </div>
               </div>

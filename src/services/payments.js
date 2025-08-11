@@ -1,7 +1,6 @@
 // payments.js - Stripe Payment API integration
 import http from './http';
-
-const PAYMENTS_BASE = '/payments/stripe';
+import { PAYMENTS_STRIPE_BASE as PAYMENTS_BASE } from './endpoints';
 
 // Get Stripe configuration (publishable key, currency, country)
 export async function getStripeConfig() {

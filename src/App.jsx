@@ -8,10 +8,13 @@ import Wishlist from './pages/Wishlist';
 import ProductDetail from './pages/ProductDetail';
 import About from './pages/About';
 import AppLayout from './layouts/AppLayout';
+import AuthGuard from './components/guards/AuthGuard';
+import RoleGuard from './components/guards/RoleGuard';
 import CheckoutDelivery from './pages/CheckoutDelivery';
 import CheckoutPayment from './pages/CheckoutPayment';
 import ThankYou from './pages/ThankYou';
 import AdminConsole from './pages/AdminConsole';
+import Seller from './pages/Seller';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
 
@@ -26,13 +29,14 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/list" element={<Home />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route path="/cart" element={<AuthGuard><Cart /></AuthGuard>} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/about" element={<About />} />
-          <Route path="/checkout/delivery" element={<CheckoutDelivery />} />
-          <Route path="/checkout/payment" element={<CheckoutPayment />} />
+          <Route path="/checkout/delivery" element={<AuthGuard><CheckoutDelivery /></AuthGuard>} />
+          <Route path="/checkout/payment" element={<AuthGuard><CheckoutPayment /></AuthGuard>} />
           <Route path="/thank-you" element={<ThankYou />} />
-          <Route path="/admin" element={<AdminConsole />} />
+          <Route path="/admin" element={<RoleGuard roles={["Admin"]}><AdminConsole /></RoleGuard>} />
+          <Route path="/seller" element={<RoleGuard roles={["Seller","Admin"]}><Seller /></RoleGuard>} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
         </Route>

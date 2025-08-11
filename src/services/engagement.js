@@ -1,10 +1,11 @@
 // engagement.js - Engagement APIs for promotions, loyalty, and notifications
 import http from './http';
+import { ENGAGE_PROMOTIONS_PATH, LOYALTY_BASE_PATH, UTILITY_NOTIFICATIONS_PATH } from './endpoints';
 
 // Promotions
 export async function getPromotions() {
   try {
-    const { data } = await http.get('/engage/promotions');
+    const { data } = await http.get(ENGAGE_PROMOTIONS_PATH);
     return Array.isArray(data) ? data : (data?.items || []);
   } catch (error) {
     console.error('Failed to fetch promotions:', error);
@@ -12,9 +13,20 @@ export async function getPromotions() {
   }
 }
 
+export async function listPromotions() {
+  const { data } = await http.get('/engage/promotions');
+  return Array.isArray(data) ? data : (data?.items || []);
+}
+
+export async function createPromotion({ code, discount_type, discount_value, start_date, end_date, usage_limit }) {
+  const payload = { code, discount_type, value: discount_value, start_date, end_date, usage_limit };
+  const { data } = await http.post('/engage/promotions', payload);
+  return data;
+}
+
 export async function applyPromotion(promotionCode, cartTotal) {
   try {
-    const { data } = await http.post('/engage/promotions', {
+    const { data } = await http.post(ENGAGE_PROMOTIONS_PATH, {
       code: promotionCode,
       cart_total: cartTotal
     });
@@ -28,7 +40,7 @@ export async function applyPromotion(promotionCode, cartTotal) {
 // Loyalty
 export async function createOrFetchLoyaltyAccount(userId) {
   try {
-    const { data } = await http.post('/engage/loyalty', { user_id: userId });
+    const { data } = await http.post(LOYALTY_BASE_PATH, { user_id: userId });
     return data;
   } catch (error) {
     console.error('Failed to create/fetch loyalty account:', error);
@@ -38,7 +50,7 @@ export async function createOrFetchLoyaltyAccount(userId) {
 
 export async function earnLoyaltyPoints(userId, points = 10) {
   try {
-    const { data } = await http.post(`/engage/loyalty/${userId}/earn`, { points });
+    const { data } = await http.post(`${LOYALTY_BASE_PATH}/${userId}/earn`, { points });
     return data;
   } catch (error) {
     console.error('Failed to earn loyalty points:', error);
@@ -49,7 +61,7 @@ export async function earnLoyaltyPoints(userId, points = 10) {
 // Notifications
 export async function createNotification(userId, type, scheduledFor = null) {
   try {
-    const { data } = await http.post('/utility/notifications', {
+    const { data } = await http.post(UTILITY_NOTIFICATIONS_PATH, {
       user_id: userId,
       type: type,
       scheduled_for: scheduledFor
@@ -63,7 +75,7 @@ export async function createNotification(userId, type, scheduledFor = null) {
 
 export async function markNotificationSent(notificationId) {
   try {
-    const { data } = await http.post(`/utility/notifications/${notificationId}/mark_sent`);
+    const { data } = await http.post(`${UTILITY_NOTIFICATIONS_PATH}/${notificationId}/mark_sent`);
     return data;
   } catch (error) {
     console.error('Failed to mark notification as sent:', error);

@@ -6,17 +6,8 @@ import http from '../services/http';
 import { validateCardNumber, validateExpiry, validateCVV } from '../utils/validation';
 import { earnLoyaltyPoints, createNotification } from '../services/engagement';
 import CouponBox from '../components/CouponBox';
+import { Input } from '../components/FormControls';
 
-const Input = ({ error, ...props }) => (
-  <input 
-    {...props} 
-    className={`w-full h-10 px-3 rounded-lg border bg-white shadow-sm transition-colors duration-200 ${
-      error 
-        ? 'border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100' 
-        : 'border-neutral/300 focus:border-[#00AFB9] focus:ring-2 focus:ring-[#00AFB9]/20'
-    } ${props.className||''}`} 
-  />
-);
 
 const CheckoutPayment = () => {
   const navigate = useNavigate();
