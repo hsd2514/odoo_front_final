@@ -1,0 +1,10 @@
+[33m516a40a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m docs: Add comprehensive documentation and environment configuration
+[33m26f6a0b[m feat: Update app routing and package dependencies
+[33m2eb3531[m feat: Update pages with new components and improved functionality
+[33m1344a69[m feat: Add engagement components for coupons, loyalty, and notifications
+[33m7ee9638[m feat: Add Stripe payment components and payment method selector
+[33mdfca28b[m feat: Add form components for filtering and date selection
+[33mba13c58[m feat: Add navigation components and view toggle functionality
+[33m0f52485[m feat: Add ProductCard component with professional design
+[33mb6dd697[m feat: Add core authentication components and context setup
+[33ma472ea3[m[33m ([m[1;31morigin/main[m[33m)[m feat(auth): integrate /users login/register, token handling, vite proxy; UI navbar; register phone field
