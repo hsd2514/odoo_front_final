@@ -8,12 +8,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://7jirjbyvrd.loclx.io',
+        target: 'https://ytsqb6hgoj.loclx.io',
         changeOrigin: true,
         secure: false,
       },
       '/users': {
-        target: 'https://7jirjbyvrd.loclx.io',
+        target: 'https://ytsqb6hgoj.loclx.io',
         changeOrigin: true,
         secure: false,
       },

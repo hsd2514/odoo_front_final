@@ -14,7 +14,7 @@ const AuthCard = ({
   return (
     <div className="min-h-screen flex items-start justify-center bg-[#f6f7f9] px-4 pt-16 pb-12 text-neutral antialiased">
       {topLeftContent && (
-        <div className="fixed top-4 left-4 z-10">
+        <div className="fixed top-4 right-4 z-10">
           {topLeftContent}
         </div>
       )}
