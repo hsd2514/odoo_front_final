@@ -3,17 +3,39 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import Cart from './pages/Cart';
+import Wishlist from './pages/Wishlist';
+import ProductDetail from './pages/ProductDetail';
 import About from './pages/About';
+import AppLayout from './layouts/AppLayout';
+import CheckoutDelivery from './pages/CheckoutDelivery';
+import CheckoutPayment from './pages/CheckoutPayment';
+import ThankYou from './pages/ThankYou';
+import AdminConsole from './pages/AdminConsole';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/" element={<Navigate to="/auth/login" replace />} />
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route element={<AppLayout />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/list" element={<Home />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/checkout/delivery" element={<CheckoutDelivery />} />
+          <Route path="/checkout/payment" element={<CheckoutPayment />} />
+          <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/admin" element={<AdminConsole />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/cancel" element={<PaymentCancel />} />
+        </Route>
       </Routes>
     </Router>
   );
