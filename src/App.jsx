@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import About from './pages/About';
 import Sandbox from './pages/Sandbox';
+import Contact from './pages/Contact';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/sandbox" element={<Sandbox />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </Router>
   );
