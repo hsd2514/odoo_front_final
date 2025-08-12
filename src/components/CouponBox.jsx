@@ -5,10 +5,9 @@ import React, { useState, useEffect } from 'react';
 import { getPromotions, applyPromotion } from '../services/engagement';
 import { pricingColors, textColors } from '../utils/colors';
 
-const CouponBox = ({ value, onChange, onApply, cartTotal = 0, className = '' }) => {
+const CouponBox = ({ value, onChange, onApply, cartTotal = 0, className = '', appliedPromo = null }) => {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [appliedPromo, setAppliedPromo] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -34,15 +33,18 @@ const CouponBox = ({ value, onChange, onApply, cartTotal = 0, className = '' }) 
     setError('');
 
     try {
+      console.log('CouponBox - Applying promotion:', value.trim(), 'with cart total:', cartTotal);
       const result = await applyPromotion(value.trim(), cartTotal);
+      console.log('CouponBox - Promotion result:', result);
+      
       if (result) {
-        setAppliedPromo(result);
         onApply?.(result);
         setError('');
       } else {
         setError('Invalid promotion code');
       }
     } catch (error) {
+      console.error('CouponBox - Promotion error:', error);
       setError('Failed to apply promotion');
     } finally {
       setLoading(false);
@@ -50,7 +52,6 @@ const CouponBox = ({ value, onChange, onApply, cartTotal = 0, className = '' }) 
   };
 
   const handleRemovePromotion = () => {
-    setAppliedPromo(null);
     setValue('');
     onApply?.(null);
   };
@@ -58,7 +59,7 @@ const CouponBox = ({ value, onChange, onApply, cartTotal = 0, className = '' }) 
   const setValue = (newValue) => {
     onChange?.(newValue);
     if (appliedPromo) {
-      setAppliedPromo(null);
+      onApply?.(null);
     }
   };
 

@@ -158,7 +158,7 @@ const Login = () => {
             />
             <span className="text-neutral/80">Remember me</span>
           </label>
-          <Link to="/forgot" className="text-neutral/80 hover:text-neutral transition-colors">Forgot Password</Link>
+          <Link to="/auth/forgot-password" className="text-neutral/80 hover:text-neutral transition-colors">Forgot Password</Link>
         </div>
         
         <button 

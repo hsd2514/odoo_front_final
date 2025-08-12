@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { getValidationError } from '../utils/validation';
 import { Field, Input } from '../components/FormControls';
+import OrderSummary from '../components/OrderSummary';
 
 const CheckoutDelivery = () => {
   const navigate = useNavigate();
-  const { getCartSummary } = useShop();
+  const { getCartSummary, appliedPromo } = useShop();
   const [same, setSame] = useState(true);
   const [delivery, setDelivery] = useState({ name:'', phone:'', address1:'', address2:'', city:'', postal:'' });
   const [invoice, setInvoice] = useState({ name:'', phone:'', address1:'', address2:'', city:'', postal:'' });
@@ -56,17 +57,15 @@ const CheckoutDelivery = () => {
       return;
     }
     
+    // Store customer information for invoice generation
+    sessionStorage.setItem('customer_name', delivery.name);
+    sessionStorage.setItem('customer_email', 'customer@example.com'); // This would come from user profile
+    sessionStorage.setItem('customer_address', `${delivery.address1}${delivery.address2 ? ', ' + delivery.address2 : ''}, ${delivery.city} ${delivery.postal}`);
+    
     navigate('/checkout/payment');
   };
 
-  const summary = getCartSummary();
 
-  // Ensure summary values exist and provide fallbacks
-  const safeSummary = {
-    subtotal: summary?.subtotal || 0,
-    tax: summary?.tax || 0,
-    total: summary?.total || 0
-  };
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-6">
@@ -167,25 +166,7 @@ const CheckoutDelivery = () => {
       </form>
       
       <div className="space-y-4">
-        <div className="rounded-xl border border-neutral/200 bg-white shadow-sm p-4">
-          <h3 className="font-semibold mb-3" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"' }}>Order Summary</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
-              <span>₹{safeSummary.subtotal.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Tax:</span>
-              <span>₹{safeSummary.tax.toLocaleString()}</span>
-            </div>
-            <div className="border-t pt-2 font-semibold">
-              <div className="flex justify-between">
-                <span>Total:</span>
-                <span>₹{safeSummary.total.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <OrderSummary summary={getCartSummary()} promo={appliedPromo} />
       </div>
     </div>
   );

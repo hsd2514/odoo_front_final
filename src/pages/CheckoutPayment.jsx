@@ -6,17 +6,17 @@ import http from '../services/http';
 import { validateCardNumber, validateExpiry, validateCVV } from '../utils/validation';
 import { earnLoyaltyPoints, createNotification } from '../services/engagement';
 import CouponBox from '../components/CouponBox';
+import OrderSummary from '../components/OrderSummary';
 import { Input } from '../components/FormControls';
 
 
 const CheckoutPayment = () => {
   const navigate = useNavigate();
-  const { cartItems, getCartSummary, clearCart } = useShop();
+  const { cartItems, getCartSummary, clearCart, appliedPromo, setAppliedPromo } = useShop();
   const [form, setForm] = useState({ name:'', number:'', expiry:'', cvv:'', save:false });
   const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState(null);
 
   const validateField = (name, value) => {
     let error = '';
@@ -74,23 +74,11 @@ const CheckoutPayment = () => {
   };
 
   const handlePromotionApply = (promotion) => {
+    console.log('CheckoutPayment - handlePromotionApply called with:', promotion);
     setAppliedPromo(promotion);
   };
 
-  const calculateFinalTotal = () => {
-    const summary = getCartSummary();
-    let finalTotal = summary.total;
-    
-    if (appliedPromo) {
-      if (appliedPromo.discount_type === 'percentage') {
-        finalTotal = finalTotal * (1 - appliedPromo.discount_value / 100);
-      } else if (appliedPromo.discount_type === 'fixed') {
-        finalTotal = Math.max(0, finalTotal - appliedPromo.discount_value);
-      }
-    }
-    
-    return finalTotal;
-  };
+
 
   const onPay = async (e) => {
     e.preventDefault();
@@ -166,7 +154,15 @@ const CheckoutPayment = () => {
       const invoiceId = ip.id ?? ip.invoice_id ?? ip.data?.id;
 
       // 4) Record payment
-      const amount = calculateFinalTotal();
+      const summary = getCartSummary();
+      let amount = summary.total;
+      if (appliedPromo && appliedPromo.valid) {
+        if (appliedPromo.discount_type === 'percentage') {
+          amount = amount * (1 - appliedPromo.discount_value / 100);
+        } else if (appliedPromo.discount_type === 'fixed') {
+          amount = Math.max(0, amount - appliedPromo.discount_value);
+        }
+      }
       await http.post('/billing/payments', { rental_id: orderId, invoice_id: invoiceId, amount });
 
       // 5) Engagement features after successful payment
@@ -183,6 +179,14 @@ const CheckoutPayment = () => {
         // Don't fail the payment if engagement features fail
       }
 
+      // Store payment information for invoice generation
+      sessionStorage.setItem('payment_amount', amount.toString());
+      sessionStorage.setItem('cart_total', getCartSummary().total.toString());
+      
+      // Store cart items for invoice generation (before clearing cart)
+      sessionStorage.setItem('cart_items', JSON.stringify(cartItems));
+      sessionStorage.setItem('applied_promo', JSON.stringify(appliedPromo));
+      
       // Success
       clearCart();
       navigate('/thank-you');
@@ -200,8 +204,7 @@ const CheckoutPayment = () => {
     }
   };
 
-  const summary = getCartSummary();
-  const finalTotal = calculateFinalTotal();
+
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-6">
@@ -316,52 +319,17 @@ const CheckoutPayment = () => {
 
       {/* Order Summary & Promotions */}
       <div className="space-y-4">
-        {/* Promotions */}
-        <CouponBox 
-          value={couponCode}
-          onChange={setCouponCode}
-          onApply={handlePromotionApply}
-          cartTotal={summary.total}
-        />
+                 {/* Promotions */}
+         <CouponBox 
+           value={couponCode}
+           onChange={setCouponCode}
+           onApply={handlePromotionApply}
+           cartTotal={getCartSummary().total}
+           appliedPromo={appliedPromo}
+         />
 
         {/* Order Summary */}
-        <div className="rounded-xl border border-neutral-200 bg-white shadow-sm p-4">
-          <h3 className="font-medium mb-3 text-neutral-900">Order Summary</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-neutral-600">Subtotal</span>
-              <span className="font-medium">₹{summary.subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-neutral-600">Delivery</span>
-              <span className="font-medium">₹{summary.delivery.toFixed(2)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-neutral-600">Taxes</span>
-              <span className="font-medium">₹{summary.taxes.toFixed(2)}</span>
-            </div>
-            
-            {/* Promotion Discount */}
-            {appliedPromo && (
-              <div className="flex items-center justify-between text-green-600">
-                <span>Promotion ({appliedPromo.code})</span>
-                <span className="font-medium">
-                  {appliedPromo.discount_type === 'percentage' 
-                    ? `-${appliedPromo.discount_value}%`
-                    : `-₹${appliedPromo.discount_value}`
-                  }
-                </span>
-              </div>
-            )}
-            
-            <div className="border-t border-neutral/200 pt-2 mt-2">
-              <div className="flex items-center justify-between font-semibold text-base">
-                <span>Total</span>
-                <span>₹{finalTotal.toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <OrderSummary summary={getCartSummary()} promo={appliedPromo} />
         
         <div className="rounded-xl border border-neutral-200 bg-white shadow-sm p-4">
           <h4 className="font-medium mb-2 text-neutral-900">Secure Payment</h4>

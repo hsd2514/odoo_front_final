@@ -5,6 +5,7 @@ import DateRangePicker from '../components/DateRangePicker';
 import CouponBox from '../components/CouponBox';
 import LoyaltyDisplay from '../components/LoyaltyDisplay';
 import OrderSummary from '../components/OrderSummary';
+import PromotionDebug from '../components/PromotionDebug';
 import { pricingColors } from '../utils/colors';
 import { validateDateRange } from '../utils/datetime';
 
@@ -18,6 +19,8 @@ const Cart = () => {
     priceMultiplier,
     cartCoupon,
     setCartCoupon,
+    appliedPromo,
+    setAppliedPromo,
     getCartSummary,
   } = useShop();
 
@@ -52,10 +55,10 @@ const Cart = () => {
 
   // totals are shown via getCartSummary()
   const [editing, setEditing] = useState(null); // key: productId|start|end
-  const [appliedPromo, setAppliedPromo] = useState(null);
   const [dateErrors, setDateErrors] = useState({});
 
   const handlePromotionApply = (promotion) => {
+    console.log('Cart - handlePromotionApply called with:', promotion);
     setAppliedPromo(promotion);
   };
 
@@ -268,18 +271,22 @@ const Cart = () => {
               ))}
             </div>
 
-            {/* Sidebar - Loyalty, Promotions & Checkout */}
-            <div className="space-y-6">
-              {/* Loyalty Display */}
-              <LoyaltyDisplay userId={1} />
+                         {/* Sidebar - Loyalty, Promotions & Checkout */}
+             <div className="space-y-6">
+               {/* Debug Info */}
+               <PromotionDebug />
+               
+               {/* Loyalty Display */}
+               <LoyaltyDisplay userId={1} />
 
-              {/* Enhanced Coupon Box */}
-              <CouponBox
-                value={cartCoupon}
-                onChange={setCartCoupon}
-                onApply={handlePromotionApply}
-                cartTotal={getCartSummary().total}
-              />
+                             {/* Enhanced Coupon Box */}
+               <CouponBox
+                 value={cartCoupon}
+                 onChange={setCartCoupon}
+                 onApply={handlePromotionApply}
+                 cartTotal={getCartSummary().total}
+                 appliedPromo={appliedPromo}
+               />
 
               {/* Order Summary */}
               <OrderSummary summary={getCartSummary()} promo={appliedPromo} />

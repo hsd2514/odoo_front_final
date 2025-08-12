@@ -26,13 +26,23 @@ export async function createPromotion({ code, discount_type, discount_value, sta
 
 export async function applyPromotion(promotionCode, cartTotal) {
   try {
-    const { data } = await http.post(ENGAGE_PROMOTIONS_PATH, {
+    const { data } = await http.post(`${ENGAGE_PROMOTIONS_PATH}/apply`, {
       code: promotionCode,
       cart_total: cartTotal
     });
     return data;
   } catch (error) {
     console.error('Failed to apply promotion:', error);
+    return null;
+  }
+}
+
+export async function setupTestPromotions() {
+  try {
+    const { data } = await http.post(`${ENGAGE_PROMOTIONS_PATH}/test-setup`);
+    return data;
+  } catch (error) {
+    console.error('Failed to setup test promotions:', error);
     return null;
   }
 }

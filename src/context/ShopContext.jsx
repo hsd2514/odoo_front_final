@@ -19,6 +19,32 @@ export default function ShopProvider({ children }) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [products, setProducts] = useState([]);
   const [cartCoupon, setCartCoupon] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(() => {
+    try {
+      const raw = localStorage.getItem('applied_promo');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  });
+  
+  // Debug logging for promotion state changes
+  React.useEffect(() => {
+    console.log('ShopContext - appliedPromo changed:', appliedPromo);
+  }, [appliedPromo]);
+  
+  // Persist promotion to localStorage
+  React.useEffect(() => {
+    try { 
+      if (appliedPromo) {
+        localStorage.setItem('applied_promo', JSON.stringify(appliedPromo));
+      } else {
+        localStorage.removeItem('applied_promo');
+      }
+    } catch {
+      // ignore persistence errors
+    }
+  }, [appliedPromo]);
 
   const priceMultiplier = useMemo(() => {
     switch (priceList) {
@@ -116,7 +142,12 @@ export default function ShopProvider({ children }) {
     setSelectedCategory,
     cartCoupon,
     setCartCoupon,
-    clearCart: () => setCartItems([]),
+    appliedPromo,
+    setAppliedPromo,
+    clearCart: () => {
+      setCartItems([]);
+      setAppliedPromo(null);
+    },
     // compute totals based on current products and cart
     getCartSummary: () => {
       const subtotal = cartItems.reduce((sum, it) => {
