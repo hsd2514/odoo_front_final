@@ -145,7 +145,7 @@ const Register = () => {
             </div>
           )}
         </div>
-        <PasswordField name="password" label="Password" value={form.password} onChange={handleChange} placeholder="Password" required />
+        <PasswordField name="password" label="Password" value={form.password} onChange={handleChange} placeholder="Password" required showStrength />
         <div className="form-control">
           <label className="label font-medium text-[13px]" htmlFor="confirmPassword">Confirm Password</label>
           <div className="relative group">

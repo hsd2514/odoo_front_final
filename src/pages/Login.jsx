@@ -144,6 +144,7 @@ const Login = () => {
           placeholder="Enter your password" 
           required 
           error={fieldErrors.password}
+          showStrength
         />
         
         <div className="flex items-center justify-between text-[13px]">

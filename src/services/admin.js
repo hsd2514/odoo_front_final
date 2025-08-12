@@ -166,7 +166,8 @@ export async function deleteInventoryItem(itemId) {
 
 export async function updateInventoryStatus(itemId, status) {
   try {
-    const { data } = await http.patch(`${INVENTORY_ITEMS_PATH}/${itemId}/status`, { status });
+    // Backend expects query param `new_status` (not JSON body)
+    const { data } = await http.patch(`${INVENTORY_ITEMS_PATH}/${itemId}/status`, null, { params: { new_status: status } });
     return data;
   } catch (error) {
     console.error('Failed to update inventory status:', error);

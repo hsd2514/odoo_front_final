@@ -13,9 +13,12 @@ const PasswordField = ({
   placeholder = 'Password', 
   required,
   error,
-  onBlur
+  onBlur,
+  showStrength = false
 }) => {
   const [show, setShow] = useState(false);
+  
+  const strength = getPasswordStrength(value || '');
   
   const getInputClassName = () => {
     const baseClasses = "w-full rounded-xl border bg-[#f4f6fa] focus:bg-white transition-colors duration-150 px-4 h-12 pr-14 text-sm placeholder:text-neutral/50 focus:outline-none focus:ring-4 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]";
@@ -56,8 +59,33 @@ const PasswordField = ({
           {error}
         </div>
       )}
+      {showStrength && (
+        <div className="mt-2">
+          <div className="h-2 w-full bg-neutral/10 rounded-full overflow-hidden">
+            <div
+              className={`h-full ${strength.barColor}`}
+              style={{ width: `${(strength.score / 4) * 100}%` }}
+            />
+          </div>
+          <div className={`text-[11px] mt-1 ${strength.textColor}`}>{strength.label}</div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default PasswordField;
+
+function getPasswordStrength(pwd) {
+  if (!pwd) return { score: 0, label: 'Enter a strong password', barColor: 'bg-neutral/30', textColor: 'text-neutral-500' };
+  let score = 0;
+  if (pwd.length >= 8) score += 1;
+  if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) score += 1;
+  if (/\d/.test(pwd)) score += 1;
+  if (/[^A-Za-z0-9]/.test(pwd) || pwd.length >= 12) score += 1;
+  const labels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong'];
+  const colors = ['bg-red-300', 'bg-orange-300', 'bg-yellow-300', 'bg-green-400', 'bg-emerald-500'];
+  const textColors = ['text-red-600', 'text-orange-600', 'text-yellow-700', 'text-green-700', 'text-emerald-700'];
+  const idx = Math.min(score, 4);
+  return { score, label: labels[idx], barColor: colors[idx], textColor: textColors[idx] };
+}

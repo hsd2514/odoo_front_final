@@ -33,11 +33,10 @@ const ShopNavbar = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="h-9 px-3 inline-flex items-center gap-2 rounded-xl border border-neutral/200 bg-white shadow-sm text-sm">
+            <Link to="/profile" className="h-9 px-3 inline-flex items-center gap-2 rounded-xl border border-neutral/200 bg-white shadow-sm text-sm">
               <span className="w-6 h-6 inline-flex items-center justify-center rounded-full bg-[#00AFB9] text-white text-xs font-medium">A</span>
-              <span>adam</span>
-            </div>
-            <Link to="/contact" className="px-3 h-9 inline-flex items-center rounded-xl text-sm bg-[#00AFB9] text-white hover:opacity-90 shadow-sm transition-all duration-200">Contact us</Link>
+              <span>Profile</span>
+            </Link>
             <button onClick={() => { clearAuthToken(); navigate('/auth/login'); }} className="px-3 h-9 inline-flex items-center rounded-xl text-sm bg-[#00AFB9] text-white hover:opacity-90 shadow-sm transition-all duration-200">Logout</button>
           </div>
         </div>

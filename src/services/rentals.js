@@ -2,8 +2,8 @@
 import http from './http';
 
 export async function listOrders(params = {}) {
-  const { status, invoice_status, q, page = 1, limit = 20 } = params;
-  const { data } = await http.get('/rentals/orders', { params: { status, invoice_status, q, page, limit } });
+  const { status, invoice_status, q, page = 1, limit = 20, customer_id, seller_id } = params;
+  const { data } = await http.get('/rentals/orders', { params: { status, invoice_status, q, page, limit, customer_id, seller_id } });
   return data; // { items, total, page, limit }
 }
 
